@@ -22,9 +22,6 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('admin/', admin.site.urls),
-    path('resource_api', resource_views.apiOverview, name='api'),
-    path('resource-list', resource_views.ResourceList, name='resource-list'),
     path('', include('resources.urls')),
     path('upload/', resource_views.upload, name='upload-resources'),
     path('update/<int:resource_id>', resource_views.update_resource),

@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Resource
+from .models import Resource, Location, Subject
 from .forms import ResourceCreate
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import resourceSerializer
+from .serializers import resourceSerializer, locationSerializer, subjectSerializer
 
 
 @api_view(['GET'])
@@ -20,9 +20,109 @@ def apiOverview(request):
 
 
 @api_view(['GET'])
-def ResourceList(request):
+def resourceList(request):
     tasks = Resource.objects.all().order_by('-id')
     serializer = resourceSerializer(tasks, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def resourceDetail(request, pk):
+    resource = Resource.objects.get(id=pk)
+    serializer = resourceSerializer(resource, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def resourceCreate(request):
+    serializer = resourceSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def resourceUpdate(request, pk):
+    resource = Resource.objects.get(id=pk)
+    serializer = resourceSerializer(instance=resource, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def apiOverview(request):
+    api_urls = {
+        'List': '/task-list/',
+        'Detail View': '/task-detail/<str:pk>/',
+        'Create': '/task-create/',
+        'Update': '/task-update/<str:pk>/',
+        'Delete': '/task-delete/<str:pk>/',
+    }
+    return Response(api_urls)
+
+
+@api_view(['GET'])
+def locationList(request):
+    locations = Location.objects.all().order_by('-id')
+    serializer = locationSerializer(locations, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def locationDetail(request, pk):
+    location = Location.objects.get(id=pk)
+    serializer = locationSerializer(location, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def locationCreate(request):
+    serializer = locationSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def locationUpdate(request, pk):
+    location = Location.objects.get(id=pk)
+    serializer = locationSerializer(instance=location, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+# subject
+
+@api_view(['GET'])
+def subjectList(request):
+    subjects = Subject.objects.all().order_by('-id')
+    serializer = subjectSerializer(subjects, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def subjectDetail(request, pk):
+    subject = Subject.objects.get(id=pk)
+    serializer = subjectSerializer(subject, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def subjectCreate(request):
+    serializer = subjectSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def subjectUpdate(request, pk):
+    subject = Subject.objects.get(id=pk)
+    serializer = subjectSerializer(instance=subject, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
     return Response(serializer.data)
 
 
