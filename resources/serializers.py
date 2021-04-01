@@ -26,10 +26,7 @@ class resourceSerializer(serializers.ModelSerializer):
         model = Resource
         fields = '__all__'
 
-class library_userSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LibraryUser
-        fields = '__all__'
+
 
 class loanSerializer(serializers.ModelSerializer):
     class Meta:

@@ -202,6 +202,13 @@ def resourceDelete(request, pk):
     return Response(response)
 
 
+# loans
+
+@api_view(['GET'])
+def getUserLoans(request, pk):
+    user = User.profile.objects.get(pk=pk)
+    books_on_loan = user.profile.loans.all()
+
 # DataFlair
 def index(request):
     shelf = Resource.objects.all()
