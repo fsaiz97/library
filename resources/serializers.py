@@ -21,12 +21,15 @@ class locationSerializer(serializers.ModelSerializer):
         model = Location
         fields = '__all__'
 
+class authorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Author
+        fields = '__all__'
+
 class resourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
         fields = '__all__'
-
-
 
 class loanSerializer(serializers.ModelSerializer):
     class Meta:

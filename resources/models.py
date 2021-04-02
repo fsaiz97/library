@@ -31,9 +31,15 @@ class Location(models.Model):
     def __str__(self):
         return self.name
 
+class Author(models.Model):
+    name = models.CharField(max_length=50, primary_key=True)
+
+    def __str__(self):
+        return self.name
+
 class Resource(models.Model):
     title = models.CharField(max_length=50)
-    author = models.CharField(max_length=50, default='', blank=True)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True) # author
     revision = models.PositiveIntegerField() # book edition
     # key = models.CharField(max_length=60, primary_key=True) # Open Library id
     publish_date = models.DateTimeField(null=True, blank=True)

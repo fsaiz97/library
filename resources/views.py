@@ -25,15 +25,17 @@ def apiOverview(request):
 
 @api_view(['GET'])
 def subjectList(request):
+    # returns a list of book subjects
     subjects = Subject.objects.all().order_by('-subject_name')
     if not subjects:
         return Response("No subjects found", status=404)
-    serializer = subjectSerializer(subjects, many=True)
+    serializer = subjectSerializer(subjects, many=True) # creates json version of a table's row, all views use similar code
     return Response(serializer.data)
 
 
 @api_view(['POST'])
 def subjectCreate(request):
+    # creates a book subject
     serializer = subjectSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -44,6 +46,7 @@ def subjectCreate(request):
 
 @api_view(['DELETE'])
 def subjectDelete(request, pk):
+    # deletes a book subject
     try:
         subject = Subject.objects.get(pk=pk)
     except Subject.DoesNotExist:
@@ -58,6 +61,7 @@ def subjectDelete(request, pk):
 
 @api_view(['GET'])
 def characterList(request):
+    # returns a list of book characters
     characters = Character.objects.all().order_by('-character_name')
     if not characters:
         return Response("No characters found", status=404)
@@ -67,6 +71,7 @@ def characterList(request):
 
 @api_view(['POST'])
 def characterCreate(request):
+    # creates a book character
     serializer = characterSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -77,6 +82,7 @@ def characterCreate(request):
 
 @api_view(['DELETE'])
 def characterDelete(request, pk):
+    # deletes a book character
     try:
         character = Character.objects.get(pk=pk)
     except Character.DoesNotExist:
@@ -91,6 +97,7 @@ def characterDelete(request, pk):
 
 @api_view(['GET'])
 def placeList(request):
+    # returns a list of book settings (e.g. towns, countries, planets, etc...)
     places = Place.objects.all().order_by('-place_name')
     if not places:
         return Response("No places found", status=404)
@@ -100,6 +107,7 @@ def placeList(request):
 
 @api_view(['POST'])
 def placeCreate(request):
+    # creates a book place
     serializer = placeSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -110,6 +118,7 @@ def placeCreate(request):
 
 @api_view(['DELETE'])
 def placeDelete(request, pk):
+    # deletes a book place
     try:
         place = Place.objects.get(pk=pk)
     except Place.DoesNotExist:
@@ -124,6 +133,7 @@ def placeDelete(request, pk):
 
 @api_view(['GET'])
 def locationList(request):
+    # returns a list of library locations
     locations = Location.objects.all().order_by('-name')
     if not locations:
         return Response("No locations found", status=404)
@@ -133,6 +143,7 @@ def locationList(request):
 
 @api_view(['POST'])
 def locationCreate(request):
+    # creates a library location
     serializer = locationSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -143,6 +154,7 @@ def locationCreate(request):
 
 @api_view(['DELETE'])
 def locationDelete(request, pk):
+    # deletes a library location
     try:
         location = Location.objects.get(pk=pk)
     except Location.DoesNotExist:
@@ -153,11 +165,46 @@ def locationDelete(request, pk):
     return Response(response)
 
 
+# author
+
+@api_view(['GET'])
+def authorList(request):
+    # returns a list of authors
+    authors = Author.objects.all().order_by('-name')
+    if not authors:
+        return Response("No authors found", status=404)
+    serializer = authorSerializer(authors, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def authorCreate(request):
+    # creates an author
+    serializer = authorSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=201)
+    else:
+        return Response("Author creation failed", status=400)
+
+
+@api_view(['DELETE'])
+def authorDelete(request, pk):
+    # deletes an author
+    try:
+        author = Author.objects.get(pk=pk)
+    except Author.DoesNotExist:
+        return Response("Author not found", status=404)
+
+    author.delete()
+    response = "%s was deleted" % pk
+    return Response(response)
 
 # resource
 
 @api_view(['GET'])
 def resourceList(request):
+    # returns a list of books owned by the library
     resources = Resource.objects.all().order_by('-key')
     if not resources:
         return Response("No places found", status=404)
@@ -166,6 +213,7 @@ def resourceList(request):
 
 @api_view(['GET'])
 def resourceDetail(request, pk):
+    # returns all stored information on a particular book
     resource = Resource.objects.get(pk=pk)
     serializer = resourceSerializer(resource, many=False)
     return Response(serializer.data)
@@ -173,6 +221,7 @@ def resourceDetail(request, pk):
 
 @api_view(['POST'])
 def resourceCreate(request):
+    # creates a new book
     serializer = resourceSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -183,6 +232,7 @@ def resourceCreate(request):
 
 @api_view(['POST'])
 def resourceUpdate(request, pk):
+    # update details of a book
     resource = Resource.objects.get(pk=pk)
     serializer = resourceSerializer(instance=resource, data=request.data)
     if serializer.is_valid():
@@ -194,6 +244,7 @@ def resourceUpdate(request, pk):
 
 @api_view(['DELETE'])
 def resourceDelete(request, pk):
+    # deletes a book
     try:
         resource = Resource.objects.get(pk=pk)
     except Resource.DoesNotExist:
@@ -208,6 +259,7 @@ def resourceDelete(request, pk):
 
 @api_view(['GET'])
 def getUserLoans(request, name):
+    # returns a list of loan records involving a particular user
     user = User.objects.get(username=name)
     loanList = user.profile.loans.through.objects.all()
     if not loanList:
@@ -217,6 +269,7 @@ def getUserLoans(request, name):
 
 # DataFlair
 def index(request):
+    # returns a list of all books, with buttons to edit and delete each book
     shelf = Resource.objects.all()
     return render(request, 'resources/library.html', {'shelf': shelf})
 
