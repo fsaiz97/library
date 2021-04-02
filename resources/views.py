@@ -267,6 +267,15 @@ def getUserLoans(request, name):
     serializer = loanReadableSerializer(loanList, many=True)
     return Response(serializer.data)
 
+# Open Library API
+
+from get_works import get_works
+
+@api_view(['GET'])
+def getAuthorWorks(request, name):
+    # returns a list of an author's works
+    get_works(name)
+
 # DataFlair
 def index(request):
     # returns a list of all books, with buttons to edit and delete each book
