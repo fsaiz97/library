@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import *
+from users.models import *
+from django.contrib.auth.models import User
 from .forms import ResourceCreate
 from django.http import HttpResponse, Http404
 from rest_framework.decorators import api_view
@@ -205,9 +207,13 @@ def resourceDelete(request, pk):
 # loans
 
 @api_view(['GET'])
-def getUserLoans(request, pk):
-    user = User.profile.objects.get(pk=pk)
-    books_on_loan = user.profile.loans.all()
+def getUserLoans(request, name):
+    user = User.objects.get(username=name)
+    loanList = user.profile.loans.through.objects.all()
+    if not loanList:
+        return Response("No loans found", status=404)
+    serializer = loanReadableSerializer(loanList, many=True)
+    return Response(serializer.data)
 
 # DataFlair
 def index(request):

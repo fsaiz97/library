@@ -32,3 +32,12 @@ class loanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Loan
         fields = '__all__'
+
+class loanReadableSerializer(serializers.ModelSerializer):
+    status = serializers.CharField(source='get_status_display')
+    account_name = serializers.CharField(source='account.user.username')
+    resource_title = serializers.CharField(source='resource.title')
+
+    class Meta:
+        model = Loan
+        fields = ['id', 'check_out_date', 'return_date', 'status', 'account_name', 'resource_title']

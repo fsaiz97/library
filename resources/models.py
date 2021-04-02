@@ -3,6 +3,8 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import date, timedelta
 #from users.models import Profile
 
 class Subject(models.Model):
@@ -49,10 +51,13 @@ class Resource(models.Model):
 
 
 class Loan(models.Model):
-    account = models.ForeignKey('users.Profile', on_delete=models.CASCADE)
-    resource = models.ForeignKey(Resource, on_delete=models.CASCADE)
-    check_out_date = models.DateField()
-    return_date = models.DateField()
+    account = models.ForeignKey('users.Profile', related_name='account_loans', on_delete=models.CASCADE)
+    resource = models.ForeignKey(Resource, related_name='resource_loans', on_delete=models.CASCADE)
+    check_out_date = models.DateField(default=timezone.now)
+    return_date = models.DateField(null=True,blank=True)
+    STATUS_CHOICES = [("D", "Due"),("R","Returned")]
+    status = models.CharField(choices=STATUS_CHOICES, default="D", max_length=20)
+
 
 
     #def __str__(self):
