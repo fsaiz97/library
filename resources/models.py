@@ -49,7 +49,8 @@ class Resource(models.Model):
     quantity = models.PositiveIntegerField(default=1) # Number of books held by the library
     location = models.ForeignKey(
         Location,
-        on_delete=models.CASCADE, ) # The location of the resource within the library
+        on_delete=models.CASCADE,
+        null=True) # The location of the resource within the library
 
     def __str__(self):
         return self.title

@@ -28,4 +28,6 @@ urlpatterns = [
     path('resource-update/<str:pk>/', views.resourceUpdate, name='resource-update'),
     path('resource-delete/<str:pk>/', views.resourceDelete, name='resource-delete'),
     path('user-loans/<str:name>/', views.getUserLoans, name='user-loans'),
+    path('books-by/<str:name>/', views.getAuthorWorks, name='get-author-works'),
+    path('save-books-by/<str:name>/', views.saveAuthorWorks, name='save-author-works'),
 ]

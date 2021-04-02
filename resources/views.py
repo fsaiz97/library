@@ -7,8 +7,10 @@ from django.http import HttpResponse, Http404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import *
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 @api_view(['GET'])
 def apiOverview(request):
     api_urls = {
@@ -23,6 +25,7 @@ def apiOverview(request):
 
 # subject
 
+@login_required
 @api_view(['GET'])
 def subjectList(request):
     # returns a list of book subjects
@@ -33,6 +36,7 @@ def subjectList(request):
     return Response(serializer.data)
 
 
+@login_required
 @api_view(['POST'])
 def subjectCreate(request):
     # creates a book subject
@@ -44,6 +48,7 @@ def subjectCreate(request):
         return Response("Subject creation failed", status=400)
 
 
+@login_required
 @api_view(['DELETE'])
 def subjectDelete(request, pk):
     # deletes a book subject
@@ -59,6 +64,7 @@ def subjectDelete(request, pk):
 
 # character
 
+@login_required
 @api_view(['GET'])
 def characterList(request):
     # returns a list of book characters
@@ -69,6 +75,7 @@ def characterList(request):
     return Response(serializer.data)
 
 
+@login_required
 @api_view(['POST'])
 def characterCreate(request):
     # creates a book character
@@ -80,6 +87,7 @@ def characterCreate(request):
         return Response("Character creation failed", status=400)
 
 
+@login_required
 @api_view(['DELETE'])
 def characterDelete(request, pk):
     # deletes a book character
@@ -95,6 +103,7 @@ def characterDelete(request, pk):
 
 # place
 
+@login_required
 @api_view(['GET'])
 def placeList(request):
     # returns a list of book settings (e.g. towns, countries, planets, etc...)
@@ -105,6 +114,7 @@ def placeList(request):
     return Response(serializer.data)
 
 
+@login_required
 @api_view(['POST'])
 def placeCreate(request):
     # creates a book place
@@ -116,6 +126,7 @@ def placeCreate(request):
         return Response("Place creation failed", status=400)
 
 
+@login_required
 @api_view(['DELETE'])
 def placeDelete(request, pk):
     # deletes a book place
@@ -131,6 +142,7 @@ def placeDelete(request, pk):
 
 #location
 
+@login_required
 @api_view(['GET'])
 def locationList(request):
     # returns a list of library locations
@@ -141,6 +153,7 @@ def locationList(request):
     return Response(serializer.data)
 
 
+@login_required
 @api_view(['POST'])
 def locationCreate(request):
     # creates a library location
@@ -152,6 +165,7 @@ def locationCreate(request):
         return Response("Location creation failed", status=400)
 
 
+@login_required
 @api_view(['DELETE'])
 def locationDelete(request, pk):
     # deletes a library location
@@ -167,6 +181,7 @@ def locationDelete(request, pk):
 
 # author
 
+@login_required
 @api_view(['GET'])
 def authorList(request):
     # returns a list of authors
@@ -177,6 +192,7 @@ def authorList(request):
     return Response(serializer.data)
 
 
+@login_required
 @api_view(['POST'])
 def authorCreate(request):
     # creates an author
@@ -188,6 +204,7 @@ def authorCreate(request):
         return Response("Author creation failed", status=400)
 
 
+@login_required
 @api_view(['DELETE'])
 def authorDelete(request, pk):
     # deletes an author
@@ -202,6 +219,7 @@ def authorDelete(request, pk):
 
 # resource
 
+@login_required
 @api_view(['GET'])
 def resourceList(request):
     # returns a list of books owned by the library
@@ -211,6 +229,7 @@ def resourceList(request):
     serializer = resourceSerializer(resources, many=True)
     return Response(serializer.data)
 
+@login_required
 @api_view(['GET'])
 def resourceDetail(request, pk):
     # returns all stored information on a particular book
@@ -219,6 +238,7 @@ def resourceDetail(request, pk):
     return Response(serializer.data)
 
 
+@login_required
 @api_view(['POST'])
 def resourceCreate(request):
     # creates a new book
@@ -230,6 +250,7 @@ def resourceCreate(request):
         return Response("Book not created", status=400)
 
 
+@login_required
 @api_view(['POST'])
 def resourceUpdate(request, pk):
     # update details of a book
@@ -241,7 +262,7 @@ def resourceUpdate(request, pk):
     else:
         return Response("Book not updated", status=400)
 
-
+@login_required
 @api_view(['DELETE'])
 def resourceDelete(request, pk):
     # deletes a book
@@ -257,6 +278,7 @@ def resourceDelete(request, pk):
 
 # loans
 
+@login_required
 @api_view(['GET'])
 def getUserLoans(request, name):
     # returns a list of loan records involving a particular user
@@ -269,12 +291,24 @@ def getUserLoans(request, name):
 
 # Open Library API
 
-from get_works import get_works
+from .get_works import get_works, save_works
+import json
 
+@login_required
 @api_view(['GET'])
 def getAuthorWorks(request, name):
     # returns a list of an author's works
-    get_works(name)
+    output = get_works(name)
+    return Response(output)
+
+@login_required
+@api_view(['POST'])
+def saveAuthorWorks(request, name):
+    # returns a list of an author's works
+    output = get_works(name)
+    works_json = json.loads(output)
+    result = save_works(works_json)
+    return Response(result)
 
 # DataFlair
 def index(request):
