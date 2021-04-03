@@ -1,0 +1,20 @@
+{% extends "users/base.html" %}
+{% block content %}
+<div class="card-columns">
+    {% for resource in shelf %}
+    <div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{ resource.title }}</h5>
+    <p class="card-text">{{ resource.author }}</p>
+   <div class="card-footer bg-transparent border-dark">
+   <p class="card-title">{{ resource.author }}</p>
+   <center>
+       <a href="resource-update/{{resource.key}}" class="btn btn-warning" id = '{{resource.key}}'>edit</a>
+       <a href="resource-delete/{{resource.key}}" class="btn btn-danger" id = '{{resource.key}}'>delete</a>
+    </center>
+    </div>
+  </div>
+</div>
+    {% endfor %}
+</div>
+{% endblock content %}
