@@ -58,14 +58,36 @@ class Resource(models.Model):
 
 
 class Loan(models.Model):
+    today = timezone.now().date()
     account = models.ForeignKey('users.Profile', related_name='account_loans', on_delete=models.CASCADE)
     resource = models.ForeignKey(Resource, related_name='resource_loans', on_delete=models.CASCADE)
-    check_out_date = models.DateField(default=timezone.now)
+    check_out_date = models.DateField(default=today)
     return_date = models.DateField(null=True,blank=True)
     STATUS_CHOICES = [("D", "Due"),("R","Returned")]
     status = models.CharField(choices=STATUS_CHOICES, default="D", max_length=20)
 
+    def save(self):
+        if self.resource.quantity <= 0:
+            return
+        else:
+            super(Loan, self).save()
 
+    def __str__(self):
+        return self.account.user.username+" has loaned "+self.resource.title
 
-    #def __str__(self):
-    #    return account.username+" has loaned "+resource.title
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
+@receiver(pre_save, sender=Loan)
+def update_quantity_on_loan_creation(instance, **kwargs):
+    # print("before ",instance.resource.quantity)
+    if instance.resource.quantity == 0:
+        pass
+    else:
+        instance.resource.quantity -=1
+        instance.resource.save()
+
+@receiver(pre_delete, sender=Loan)
+def update_quantity_on_loan_deletion(instance, **kwargs):
+    instance.resource.quantity +=1
+    instance.resource.save()

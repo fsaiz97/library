@@ -75,10 +75,27 @@ WSGI_APPLICATION = 'library.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+        'ENGINE': 'sql_server.pyodbc',
+
+        'NAME': 'libraryDB',
+
+        'USER': 'library_admin@cap21-library-server',
+
+        'PASSWORD': 'Password1!',
+
+        'HOST': 'cap21-library-server.database.windows.net',
+
+        'PORT': '',
+
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
+
     }
+
 }
 
 # Password validation

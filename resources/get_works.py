@@ -5,6 +5,8 @@ import json
 import pandas as pd
 from olclient.openlibrary import OpenLibrary
 from .models import *
+import datetime
+from dateutil import parser
 
 url_template = 'http://openlibrary.org/authors/{id}/works.json'
 
@@ -21,7 +23,7 @@ def get_works(name):
     if resp.ok:
         response = resp.json()  # return json of results if ok
     else:
-        print(resp.reason)  # print reason if not ok
+        return resp.reason  # print reason if not ok
 
     datalist = response['entries']  # make json data easier to parse through
 
@@ -89,21 +91,39 @@ def save_works(works_json):
         author, created = Author.objects.get_or_create(name = author_name)
         for work in works_json:
             subjects = [] if work["Subjects"]=="N/A" else [Subject(subject_name=name) for name in work["Subjects"]]
-            Subject.objects.bulk_create(subjects, ignore_conflicts=True)
+            subjects_new = []
+            for subject in subjects:
+                if subject not in Subject.objects.filter(subject_name=subject.subject_name):
+                    subject.save()
+                subjects_new.append(subject)
             characters = [] if work["Characters"]=="N/A" else [Character(character_name=name) for name in work["Characters"]]
-            Character.objects.bulk_create(characters, ignore_conflicts=True)
+            for character in characters:
+                if character not in Character.objects.filter(character_name=character.character_name):
+                    character.save()
             places = [] if work["Places"]=="N/A" else [Place(place_name=name) for name in work["Places"]]
-            Place.objects.bulk_create(places, ignore_conflicts=True)
-            date = work["Publish Date"]
-            book = Resource(title=work["Title"],
-                            author=author,
-                            revision=work["Revision"],
-                            publish_date=date,
-                            quantity=1,
-                            location=None)
-            book.save()
-            book.subjects.add(*subjects)
-            book.characters.add(*characters)
-            book.places.add(*places)
+            for place in places:
+                if place not in Place.objects.filter(place_name=place.place_name):
+                    place.save()
+            date = parser.parse(work["Publish Date"]) if work["Publish Date"] != None else None
+            if not Resource.objects.filter(title=work["Title"],author=author,revision=work["Revision"]):
+                book = Resource(
+                                title=work["Title"],
+                                author=author,
+                                revision=work["Revision"],
+                                publish_date=date,
+                                quantity=1,
+                                location=None)
+                #return book.title, book.author, book.revision, book.publish_date, book.quantity, book.location
+                book.save()
+                #return "yay"
+                ''' # Can't auto add subjects, characters or places at the moment
+                for subject in subjects_new:
+                    book.subjects.add(subject)
+                for character in characters:
+                    book.characters.add(character)
+                    for place in places:
+                        book.places.add(place)
+                '''
+        return 1
     except:
         return -1

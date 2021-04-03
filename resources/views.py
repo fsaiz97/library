@@ -3,7 +3,6 @@ from .models import *
 from users.models import *
 from django.contrib.auth.models import User
 from .forms import ResourceCreate
-from django.http import HttpResponse, Http404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import *
@@ -223,7 +222,7 @@ def authorDelete(request, pk):
 @api_view(['GET'])
 def resourceList(request):
     # returns a list of books owned by the library
-    resources = Resource.objects.all().order_by('-key')
+    resources = Resource.objects.all().order_by('-id')
     if not resources:
         return Response("No places found", status=404)
     serializer = resourceSerializer(resources, many=True)
@@ -274,7 +273,21 @@ def resourceDelete(request, pk):
     resource.delete()
     response = "%s was deleted" % pk
     return Response(response)
-
+'''
+@login_required
+@api_view(['DELETE'])
+def resourceSearchBySubject(request, name):
+    # finds all books on a particular subject
+    try
+    subject = Subject.objects.get(subject_name=name)
+    except Subject.DoesNotExist:
+        return Response("Subject not found", status=404)
+    resources = Resource.objects.filter(subject__in=subjects).order_by('-id')
+    if not resources:
+        return Response("No books found", status=404)
+    serializer = resourceSerializer(resources, many=True)
+    return Response(serializer.data)
+'''
 
 # loans
 
@@ -282,12 +295,52 @@ def resourceDelete(request, pk):
 @api_view(['GET'])
 def getUserLoans(request, name):
     # returns a list of loan records involving a particular user
-    user = User.objects.get(username=name)
+    if request.user.is_superuser:
+        user = User.objects.get(username=name)
+        loanList = user.profile.loans.through.objects.all()
+        if not loanList:
+            return Response("No loans found", status=404)
+        serializer = loanReadableSerializer(loanList, many=True)
+        return Response(serializer.data)
+    else:
+        return Response("Admin credentials required", status=401)
+
+@login_required
+@api_view(['GET'])
+def getMyLoans(request):
+    # returns a list of loan records involving the logged on user
+    user = request.user
     loanList = user.profile.loans.through.objects.all()
     if not loanList:
         return Response("No loans found", status=404)
     serializer = loanReadableSerializer(loanList, many=True)
     return Response(serializer.data)
+
+@login_required
+@api_view(['POST'])
+def createLoan(request):
+    username = request.data["user"]
+    user = User.objects.get(username=username)
+    title = request.data["resource"]
+    book = Resource.objects.get(title=title)
+    loan = Loan(account=user.profile, resource=book)
+    loan.save()
+    serializer = loanReadableSerializer(loan)
+    return Response(serializer.data)
+
+@login_required
+@api_view(['DELETE'])
+def deleteLoan(request, pk):
+    # deletes a loan
+    try:
+        loan = Loan.objects.get(pk=pk)
+    except Loan.DoesNotExist:
+        return Response("Loan not found", status=404)
+
+    loan.delete()
+    response = "Loan %s was deleted" % pk
+    return Response(response)
+
 
 # Open Library API
 
@@ -299,16 +352,24 @@ import json
 def getAuthorWorks(request, name):
     # returns a list of an author's works
     output = get_works(name)
-    return Response(output)
+    if output == "Not Found":
+        return Response("Author "+output, status=404)
+    else:
+        return Response(output)
 
 @login_required
 @api_view(['POST'])
 def saveAuthorWorks(request, name):
-    # returns a list of an author's works
+    # saves 1 of every work made by an author
     output = get_works(name)
+    if output == "Not Found":
+        return Response("Author "+output, status=404)
     works_json = json.loads(output)
     result = save_works(works_json)
-    return Response(result)
+    if result == -1:
+        return Response("Works not saved", status=400)
+    else:
+        return Response(str(result), status=418)
 
 # DataFlair
 def index(request):
