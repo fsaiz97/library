@@ -40,7 +40,9 @@ def resourceCreate(request):
         serializer.save()
     return Response(serializer.data)
 
-
+from rest_framework.permissions import IsAdminUser
+from rest_framework.decorators import permission_classes
+@permission_classes([IsAdminUser])
 @api_view(['POST'])
 def resourceUpdate(request, pk):
     resource = Resource.objects.get(id=pk)
