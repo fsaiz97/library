@@ -1,0 +1,7 @@
+Django==3.0.10
+pandas
+olclient.openlibrary # instructions at https://github.com/internetarchive/openlibrary-client
+djangorestframework
+django-crispy-forms
+django-mssql-backend
+Pillow
