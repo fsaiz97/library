@@ -5,3 +5,4 @@ djangorestframework
 django-crispy-forms
 django-mssql-backend
 Pillow
+ODBC Driver 17 # Not a module

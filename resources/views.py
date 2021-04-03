@@ -230,6 +230,7 @@ def resourceList(request):
     serializer = resourceSerializer(resources, many=True)
     return Response(serializer.data)
 
+
 @login_required
 @api_view(['GET'])
 def resourceDetail(request, pk):
@@ -262,6 +263,7 @@ def resourceUpdate(request, pk):
         return Response(serializer.data)
     else:
         return Response("Book not updated", status=400)
+
 
 @login_required
 @api_view(['DELETE'])
@@ -318,6 +320,7 @@ def getMyLoans(request):
     serializer = loanReadableSerializer(loanList, many=True)
     return Response(serializer.data)
 
+
 @login_required
 @api_view(['POST'])
 def createLoan(request):
@@ -329,6 +332,7 @@ def createLoan(request):
     loan.save()
     serializer = loanReadableSerializer(loan)
     return Response(serializer.data)
+
 
 @login_required
 @api_view(['DELETE'])
@@ -357,6 +361,7 @@ def getAuthorWorks(request, name):
     else:
         return Response(output)
 
+
 @login_required
 @api_view(['POST'])
 def saveAuthorWorks(request, name):
@@ -378,6 +383,7 @@ def index(request):
     return render(request, 'resources/library.html', {'shelf': shelf})
 
 
+@login_required
 def upload(request):
     upload_resource = ResourceCreate()
     if request.method == 'POST':
@@ -391,6 +397,7 @@ def upload(request):
         return render(request, 'resources/upload_form.html', {'upload_form': upload_resource})
 
 
+@login_required
 def update_resource(request, resource_id):
     resource_id = int(resource_id)
     try:
@@ -404,6 +411,7 @@ def update_resource(request, resource_id):
     return render(request, 'resources/upload_form.html', {'upload_form': resource_form})
 
 
+@login_required
 def delete_resource(request, resource_id):
     resource_id = int(resource_id)
     try:
