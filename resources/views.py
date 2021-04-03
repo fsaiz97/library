@@ -7,6 +7,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import *
 from django.contrib.auth.decorators import login_required
+from .get_works import get_works, save_works
+import json
 
 
 @login_required
@@ -344,8 +346,6 @@ def deleteLoan(request, pk):
 
 # Open Library API
 
-from .get_works import get_works, save_works
-import json
 
 @login_required
 @api_view(['GET'])

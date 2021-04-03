@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth import get_user_model
 #from resources.models import Resource, Loan
 from rest_framework.response import Response
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+#from django.contrib.auth import get_user_model
 
 
 class Profile(models.Model):
@@ -12,9 +15,6 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
 
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-#from django.contrib.auth import get_user_model
 
 @receiver(post_save, sender=get_user_model())
 def createProfile(sender, instance, created, **kwargs):

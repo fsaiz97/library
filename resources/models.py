@@ -5,7 +5,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import date, timedelta
-#from users.models import Profile
+from django.db.models.signals import pre_save, pre_delete
+from django.dispatch import receiver
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=100, primary_key=True)
@@ -74,9 +75,6 @@ class Loan(models.Model):
 
     def __str__(self):
         return self.account.user.username+" has loaned "+self.resource.title
-
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 
 @receiver(pre_save, sender=Loan)
 def update_quantity_on_loan_creation(instance, **kwargs):
