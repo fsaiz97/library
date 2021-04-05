@@ -9,6 +9,8 @@ from .serializers import *
 from django.contrib.auth.decorators import login_required
 from .get_works import get_works, save_works
 import json
+from rest_framework.permissions import IsAdminUser
+from rest_framework.decorators import permission_classes
 
 
 @login_required
@@ -36,7 +38,7 @@ def subjectList(request):
     serializer = subjectSerializer(subjects, many=True) # creates json version of a table's row, all views use similar code
     return Response(serializer.data)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['POST'])
 def subjectCreate(request):
@@ -48,7 +50,7 @@ def subjectCreate(request):
     else:
         return Response("Subject creation failed", status=400)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['DELETE'])
 def subjectDelete(request, pk):
@@ -75,7 +77,7 @@ def characterList(request):
     serializer = characterSerializer(characters, many=True)
     return Response(serializer.data)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['POST'])
 def characterCreate(request):
@@ -87,7 +89,7 @@ def characterCreate(request):
     else:
         return Response("Character creation failed", status=400)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['DELETE'])
 def characterDelete(request, pk):
@@ -114,7 +116,7 @@ def placeList(request):
     serializer = placeSerializer(places, many=True)
     return Response(serializer.data)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['POST'])
 def placeCreate(request):
@@ -126,7 +128,7 @@ def placeCreate(request):
     else:
         return Response("Place creation failed", status=400)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['DELETE'])
 def placeDelete(request, pk):
@@ -153,7 +155,7 @@ def locationList(request):
     serializer = locationSerializer(locations, many=True)
     return Response(serializer.data)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['POST'])
 def locationCreate(request):
@@ -165,7 +167,7 @@ def locationCreate(request):
     else:
         return Response("Location creation failed", status=400)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['DELETE'])
 def locationDelete(request, pk):
@@ -192,7 +194,7 @@ def authorList(request):
     serializer = authorSerializer(authors, many=True)
     return Response(serializer.data)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['POST'])
 def authorCreate(request):
@@ -204,7 +206,8 @@ def authorCreate(request):
     else:
         return Response("Author creation failed", status=400)
 
-
+    
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['DELETE'])
 def authorDelete(request, pk):
@@ -240,6 +243,7 @@ def resourceDetail(request, pk):
     return Response(serializer.data)
 
 
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['POST'])
 def resourceCreate(request):
@@ -252,6 +256,7 @@ def resourceCreate(request):
         return Response("Book not created", status=400)
 
 
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['POST'])
 def resourceUpdate(request, pk):
@@ -264,7 +269,7 @@ def resourceUpdate(request, pk):
     else:
         return Response("Book not updated", status=400)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['DELETE'])
 def resourceDelete(request, pk):
@@ -295,6 +300,7 @@ def resourceSearchBySubject(request, name):
 
 # loans
 
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['GET'])
 def getUserLoans(request, name):
@@ -320,7 +326,7 @@ def getMyLoans(request):
     serializer = loanReadableSerializer(loanList, many=True)
     return Response(serializer.data)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['POST'])
 def createLoan(request):
@@ -333,7 +339,7 @@ def createLoan(request):
     serializer = loanReadableSerializer(loan)
     return Response(serializer.data)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['DELETE'])
 def deleteLoan(request, pk):
@@ -361,7 +367,7 @@ def getAuthorWorks(request, name):
     else:
         return Response(output)
 
-
+@permission_classes([IsAdminUser])
 @login_required
 @api_view(['POST'])
 def saveAuthorWorks(request, name):
@@ -382,7 +388,7 @@ def index(request):
     shelf = Resource.objects.all()
     return render(request, 'resources/library.html', {'shelf': shelf})
 
-
+@permission_classes([IsAdminUser])
 @login_required
 def upload(request):
     upload_resource = ResourceCreate()
@@ -396,7 +402,7 @@ def upload(request):
     else:
         return render(request, 'resources/upload_form.html', {'upload_form': upload_resource})
 
-
+@permission_classes([IsAdminUser])
 @login_required
 def update_resource(request, resource_id):
     resource_id = int(resource_id)
@@ -410,7 +416,7 @@ def update_resource(request, resource_id):
         return redirect('index')
     return render(request, 'resources/upload_form.html', {'upload_form': resource_form})
 
-
+@permission_classes([IsAdminUser])
 @login_required
 def delete_resource(request, resource_id):
     resource_id = int(resource_id)
