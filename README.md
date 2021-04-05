@@ -46,8 +46,14 @@ Group 35 members: Felix Xavier Saiz,Muhammad Hassan Rasheed, Oliver Whiteley, Ak
 
 	- [https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/install-microsoft-odbc-driver-sql-server-macos?view=sql-server-ver15](https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/install-microsoft-odbc-driver-sql-server-macos?view=sql-server-ver15) (MacOS)
 
-- To install our app
-	`$ git clone https://github.com/mhassanrasheed/library.git `
+- To install our app 
+
+	`$ git clone https://github.com/mhassanrasheed/library.git ` 
+	and switch to felix_branch.
+	
+	Or you can go to 
+	 [https://github.com/mhassanrasheed/library/tree/felix_branch](https://github.com/mhassanrasheed/library/tree/felix_branch)
+	 and download the zip file.
 	
 ## Configuration	
 Database connection is already set in the settings.py in Django
