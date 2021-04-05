@@ -1,3 +1,4 @@
+# Can be used to test the api without using a cloud service
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
