@@ -40,7 +40,7 @@ Group 35 members: Felix Xavier Saiz,Muhammad Hassan Rasheed, Oliver Whiteley, Ak
 ](https://github.com/internetarchive/openlibrary-client)
 
 	or clone the project from 
-	`git clone https://github.com/encode/django-rest-framework`
+	`git clone https://github.com/internetarchive/openlibrary-client`
 - You should download ODBC driver for SQL server from
 	- [https://docs.microsoft.com/en-us/sql/connect/odbc/microsoft-odbc-driver-for-sql-server?view=sql-server-ver15](https://docs.microsoft.com/en-us/sql/connect/odbc/microsoft-odbc-driver-for-sql-server?view=sql-server-ver15) (Windows)
 
